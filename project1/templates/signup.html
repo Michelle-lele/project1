@@ -1,0 +1,56 @@
+{% extends "index.html" %}
+{% block body %}
+
+<div class="page-wrapper bg-green p-t-100 p-b-100 font-robo">
+        <div class="wrapper wrapper--w960">
+            <div class="card card-2">
+                <div class="card-heading"></div>
+                <div class="card-body">
+                    <h2 class="title">Sign Up</h2>
+                    {% if errorMessages %}
+                    <div class="">
+                        <ul>
+                            {% for errorMessage in errorMessages %}
+                            <li>{{ errorMessage }}</li>
+                            {% endfor%}
+                        </ul>
+                    </div>
+                    {% endif %}
+                    <form method="POST" action = "{{ url_for('index') }}">
+                        <div class="input-group">
+                            <label for="name" class="input--style-2">Name</label>
+                            <input class="input--style-2" type="text" placeholder="" name="name">
+                        </div>
+                                                <div class="input-group">
+                             <label for="email" class="input--style-2 required">Username</label>
+                            <input class="input--style-2 required" type="text" placeholder="" name="username">
+                        </div>
+                         <div class="input-group">
+                                     <label for="password" class="input--style-2 required">Password</label>
+                                    <input class="input--style-2 required" type="password" placeholder="" name="password">
+                                </div>
+                         <div class="input-group">
+                                    <label for="password" class="input--style-2 required">Confirm Password</label>
+                                    <input class="input--style-2 required" type="password" placeholder="" name="confirm_password">
+                                </div>
+                       
+                        <div class="p-t-20">
+                            <button class="btn btn--radius btn--green" type="submit">Sign Up</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Jquery JS-->
+    <script src="static/vendor/jquery/jquery.min.js"></script>
+    <!-- Vendor JS-->
+    <script src="static/vendor/select2/select2.min.js"></script>
+    <script src="static/vendor/datepicker/moment.min.js"></script>
+    <script src="static/vendor/datepicker/daterangepicker.js"></script>
+
+    <!-- Main JS-->
+    <script src="js/global.js"></script>
+
+{% endblock %}

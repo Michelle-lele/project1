@@ -310,7 +310,7 @@ input {
 /* end input group 1 */
 .input-group {
   position: relative;
-  margin-bottom: 32px;
+  margin-bottom: 22px;
   border-bottom: 1px solid #e5e5e5;
 }
 
@@ -362,6 +362,11 @@ input {
   color: #808080;
 }
 
+.required::after{
+  content: "*";
+  color: red;
+
+}
 /* ==========================================================================
    #SELECT2
    ========================================================================== */
@@ -486,8 +491,8 @@ input {
 
 .card-2 .card-body {
   display: table-cell;
-  padding: 80px 90px;
-  padding-bottom: 88px;
+  padding: 50px 90px;
+  padding-bottom: 50px;
 }
 
 @media (max-width: 767px) {
