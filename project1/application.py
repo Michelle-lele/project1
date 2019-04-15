@@ -1,4 +1,4 @@
-import os
+import os 
 import sys
 
 from flask import Flask, session, render_template, request, redirect
@@ -7,6 +7,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 app = Flask(__name__)
+app.config.from_envvar('APP_SETTINGS')
 
 # Check for environment variable
 if not os.getenv("DATABASE_URL"):
@@ -34,7 +35,7 @@ def signup():
 		errorMessages= []
 		#ensure required fields are submitted
 		if not request.form.get("username"):
-			print(errorMessages, file=sys.stderr)
+			#print(errorMessages, file=sys.stderr)
 			errorMessages.append("Username is required!")
 		
 		if not request.form.get("password"):
@@ -46,12 +47,25 @@ def signup():
 		if errorMessages != []:
 			return render_template("signup.html", errorMessages=errorMessages)
 
+		#ensure username has no spaces
+		if ' ' in request.form.get("username"):
+			errorMessages.append("Username should not contain spaces!")
+
 		#ensure passwords match
 		if request.form.get("password") != request.form.get("confirm_password"):
 			errorMessages.append("Passwords don't match!")
+
+		if errorMessages != []:
 			return render_template("signup.html", errorMessages=errorMessages)
 
-		#ToDo password validation
+		#ensure password has minimum 8 characters, including characters & numbers
+		if len(request.form.get("password")) < 8:
+			errorMessages.append("Password should be at least 8 symbols!")
+		if not request.form.get("password").isalnum():
+			errorMessages.append("Password should contain at least 1 letter or digit!")
+
+		if errorMessages != []:
+			return render_template("signup.html", errorMessages=errorMessages)
 
 		#ensure username doesn't exist
 		NewUserName = request.form.get("username")
@@ -65,12 +79,11 @@ def signup():
 				return render_template("signup.html", errorMessages=errorMessages)
 		
 		#create new user in db
-		#ToDo hash passwords
 		NewUser = db.execute("INSERT INTO users (username, password, name) VALUES (:username,:password, :name)", 
-			{"username": request.form.get("username"), "password": request.form.get("password"), "name": request.form.get("name")})
+			{"username": request.form.get("username"), "password": hash(request.form.get("password")), "name": request.form.get("name")})
 		db.commit()
 		successMessage = "Registration successful!"
-		print(successMessage, file=sys.stderr)
+		#print(successMessage, file=sys.stderr)
 		return render_template("login.html", successMessage=successMessage)
 	return render_template("signup.html")
 
