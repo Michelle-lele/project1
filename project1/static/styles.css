@@ -119,6 +119,7 @@ button {
    ========================================================================== */
 .page-wrapper {
   min-height: 100vh;
+  padding: 100px 0;
 }
 
 body {
@@ -457,7 +458,7 @@ input {
 .title {
   text-transform: uppercase;
   font-weight: 700;
-  margin-bottom: 37px;
+  margin-bottom: 17px;
   color: #57b846;
 }
 
@@ -495,6 +496,19 @@ input {
   padding-bottom: 50px;
 }
 
+.submit-error-alert{
+  color: red;
+  margin-bottom: 20px;
+}
+
+.submit-success-alert{
+  color: green;
+  margin-bottom: 20px;
+}
+.submit-error-alert ul, .submit-success-alert  ul{
+  list-style-type: none;
+}
+
 @media (max-width: 767px) {
   .card-2 {
     display: block;
@@ -508,5 +522,17 @@ input {
   .card-2 .card-body {
     display: block;
     padding: 60px 50px;
+
+}
+
+
+@media (max-width: 965px) {
+  }
+  .wrapper {
+   margin: 0 10px;
+  }
+
+  .page-wrapper {
+    padding: 10px 0;
   }
 }

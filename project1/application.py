@@ -1,7 +1,7 @@
 import os
 import sys
 
-from flask import Flask, session, render_template, request
+from flask import Flask, session, render_template, request, redirect
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -24,12 +24,17 @@ db = scoped_session(sessionmaker(bind=engine))
 
 @app.route("/", methods=["POST", "GET"])
 def index():
+	#TO DO
+	return redirect("/signup")
 
 
+@app.route("/signup", methods=["POST","GET"])
+def signup():
 	if request.method == "POST":
 		errorMessages= []
 		#ensure required fields are submitted
 		if not request.form.get("username"):
+			print(errorMessages, file=sys.stderr)
 			errorMessages.append("Username is required!")
 		
 		if not request.form.get("password"):
@@ -60,11 +65,27 @@ def index():
 				return render_template("signup.html", errorMessages=errorMessages)
 		
 		#create new user in db
+		#ToDo hash passwords
 		NewUser = db.execute("INSERT INTO users (username, password, name) VALUES (:username,:password, :name)", 
 			{"username": request.form.get("username"), "password": request.form.get("password"), "name": request.form.get("name")})
 		db.commit()
-		#return render_template("index.html")
-		
+		successMessage = "Registration successful!"
+		print(successMessage, file=sys.stderr)
+		return render_template("login.html", successMessage=successMessage)
 	return render_template("signup.html")
 
- 
+@app.route("/login", methods=["POST","GET"])
+def login():
+	if request.method == "POST":
+		errorMessages= []
+		#ensure required fields are submitted
+		if not request.form.get("username"):
+			print(errorMessages, file=sys.stderr)
+			errorMessages.append("Username is required!")
+		
+		if not request.form.get("password"):
+			errorMessages.append("Password is required!")
+
+		if errorMessages != []:
+			return render_template("login.html", errorMessages=errorMessages)
+	return render_template("index.html")
