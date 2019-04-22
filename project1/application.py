@@ -5,13 +5,14 @@ from flask import Flask, session, render_template, request, redirect
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
+from werkzeug.security import check_password_hash, generate_password_hash
 
 app = Flask(__name__)
 app.config.from_envvar('APP_SETTINGS')
 
 # Check for environment variable
 if not os.getenv("DATABASE_URL"):
-    raise RuntimeError("DATABASE_URL is not set")
+	raise RuntimeError("DATABASE_URL is not set")
 
 # Configure session to use filesystem
 app.config["SESSION_PERMANENT"] = False
@@ -26,8 +27,8 @@ db = scoped_session(sessionmaker(bind=engine))
 @app.route("/", methods=["POST", "GET"])
 def index():
 	#TO DO
-	return redirect("/login")
-
+	#show only if logged in, otherwise redirect to login page
+	return render_template("index.html")
 
 @app.route("/signup", methods=["POST","GET"])
 def signup():
@@ -86,20 +87,26 @@ def signup():
 		
 		#create new user in db
 		NewUser = db.execute("INSERT INTO users (username, password, name) VALUES (:username,:password, :name)", 
-			{"username": request.form.get("username"), "password": hash(request.form.get("password")), "name": request.form.get("name")})
+			{"username": request.form.get("username"), "password": generate_password_hash(request.form.get("password")), 
+			"name": request.form.get("name")})
 		db.commit()
 		successMessage = "Registration successful!"
+		this = generate_password_hash(request.form.get("password"))
+		print(this, file=sys.stderr)
 		#print(successMessage, file=sys.stderr)
 		return render_template("login.html", successMessage=successMessage)
 	return render_template("signup.html")
 
 @app.route("/login", methods=["POST","GET"])
 def login():
+	# Forget any user_id
+	session.clear()
+
 	if request.method == "POST":
 		errorMessages= []
 		#ensure required fields are submitted
 		if not request.form.get("username"):
-			print(errorMessages, file=sys.stderr)
+			#print(errorMessages, file=sys.stderr)
 			errorMessages.append("Username is required!")
 		
 		if not request.form.get("password"):
@@ -107,4 +114,32 @@ def login():
 
 		if errorMessages != []:
 			return render_template("login.html", errorMessages=errorMessages)
-	return render_template("login.html")
+
+		# Query database for username
+		users = db.execute("SELECT * FROM users WHERE username = :username",
+						{"username": request.form.get("username")}).fetchall()
+
+		# Ensure username exists and password is correct
+		if len(users) != 1 or not check_password_hash(users[0]["password"], request.form.get("password")):
+			errorMessages.append("Invalid username and/or password")
+
+		if errorMessages != []:
+			return render_template("login.html", errorMessages=errorMessages)
+
+		# Remember which user has logged in
+		session["user_id"] = users[0]["user_id"]
+
+		# Redirect user to home page
+		return redirect("/")
+
+	# User reached route via GET (as by clicking a link or via redirect)
+	else:
+		return render_template("login.html")
+
+@app.route("/logout")
+def logout():
+	# Forget any user_id
+	session.clear()
+
+	# Redirect user to login form
+	return redirect("/login")
