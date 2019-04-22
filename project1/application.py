@@ -46,6 +46,12 @@ def signup():
 
 		if errorMessages != []:
 			return render_template("signup.html", errorMessages=errorMessages)
+			
+		'''TO DO validate that special characters are not provided in username
+		#ensure name is alphanumeric
+		if not isalnum(request.form.get("name")):
+			errorMessages.append("Username should not contain spaces!")
+		'''
 
 		#ensure username has no spaces
 		if ' ' in request.form.get("username"):
