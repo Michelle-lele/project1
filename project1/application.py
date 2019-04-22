@@ -26,7 +26,7 @@ db = scoped_session(sessionmaker(bind=engine))
 @app.route("/", methods=["POST", "GET"])
 def index():
 	#TO DO
-	return redirect("/signup")
+	return redirect("/login")
 
 
 @app.route("/signup", methods=["POST","GET"])
@@ -101,4 +101,4 @@ def login():
 
 		if errorMessages != []:
 			return render_template("login.html", errorMessages=errorMessages)
-	return render_template("index.html")
+	return render_template("login.html")
