@@ -1,5 +1,6 @@
 {% extends "index.html" %}
 {% block body %}
+    <div class="page-wrapper bg-green font-robo">
         <div class="wrapper wrapper--w960">
             <div class="card card-2">
                 <div class="card-heading"></div>
@@ -35,6 +36,8 @@
                         <div class="p-t-20">
                             <button class="btn btn--radius btn--green" type="submit">Sign Up</button>
                         </div>
+                        <div class="input--style-2 center">Already have an account? <a href="{{ url_for('login') }}">Login here</a>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -49,5 +52,5 @@
 
     <!-- Main JS-->
     <script src="js/global.js"></script>
-
+    </div> 
 {% endblock %}

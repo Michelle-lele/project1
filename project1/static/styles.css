@@ -463,6 +463,34 @@ input {
 }
 
 /* ==========================================================================
+   #NAVIGATION
+   ========================================================================== */
+
+.topnav {
+  background-color: #57b846;
+  overflow: hidden;
+}
+
+.topnav a {
+  float: right;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+.topnav a:hover {
+  background-color: #ddd;
+  color: #57b846;
+}
+.topnav a.active {
+  background-color: #4CAF50;
+  color: white;
+}
+
+
+/* ==========================================================================
    #CARD
    ========================================================================== */
 .card {
@@ -482,6 +510,7 @@ input {
   border-radius: 10px;
   width: 100%;
   display: table;
+  min-height: 500px;
 }
 
 .card-2 .card-heading {
@@ -509,6 +538,11 @@ input {
   list-style-type: none;
 }
 
+.center {
+  text-align: center;
+  margin-top: 20px; 
+}
+
 @media (max-width: 767px) {
   .card-2 {
     display: block;
@@ -519,7 +553,7 @@ input {
     padding-top: 300px;
     background-position: left center;
   }
-  .card-2 .card-body {
+  .card-2 .card-body{
     display: block;
     padding: 60px 50px;
 

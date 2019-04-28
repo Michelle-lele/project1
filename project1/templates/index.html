@@ -24,12 +24,27 @@
 </head>
 
 <body>
-
-    <div class="page-wrapper bg-green font-robo">
+    <div class="topnav">
+        <!-- <a class="active" href="#home">Home</a>--->
+        {% if username %}
+        <a href="{{ url_for('logout') }}">Logout</a>
+        <a href="#">Profile</a>
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        {% elif url_for(request.endpoint) == "signup" %}
+        <a href="{{ url_for('login') }}">Login</a>
+        {% elif url_for(request.endpoint) == "login" %}
+        <a href="{{ url_for('signup') }}">Signup</a>
+        {% else %}
+        <a href="{{ url_for('login') }}">Login</a>
+        <a href="{{ url_for('signup') }}">Signup</a>
+        {% endif %}
+</div> 
 
    {% block body %}
+
+
    {% endblock %}
-    </div>
+
 </body><!-- This templates was made by Colorlib (https://colorlib.com) -->
 
 </html>
