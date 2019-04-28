@@ -1,0 +1,56 @@
+{% extends "index.html" %}
+{% block body %}
+    <div class="page-wrapper bg-green font-robo">
+        <div class="wrapper wrapper--w960">
+            <div class="card card-2">
+                <div class="card-heading"></div>
+                <div class="card-body">
+                    <h2 class="title">Login</h2>
+                    {% if errorMessages %}
+                    <div class="submit-error-alert">
+                        <ul>
+                            {% for errorMessage in errorMessages %}
+                            <li>{{ errorMessage }}</li>
+                            {% endfor%}
+                        </ul>
+                    </div>
+                    {% endif %}
+                    {% if successMessage %}
+                    <div class="submit-success-alert">
+                        <ul>
+                            <li>{{ successMessage }}</li>
+                        </ul>
+                    </div>
+                    {% endif %}
+                    <form method="POST" action = "{{ url_for('login') }}">
+                                                <div class="input-group">
+                             <label for="email" class="input--style-2 required">Username</label>
+                            <input class="input--style-2 required" type="text" placeholder="" name="username">
+                        </div>
+                         <div class="input-group">
+                                     <label for="password" class="input--style-2 required">Password</label>
+                                    <input class="input--style-2 required" type="password" placeholder="" name="password">
+                                </div>
+                    
+                        <div class="p-t-20">
+                            <button class="btn btn--radius btn--green" type="submit">Login</button>
+                        </div>
+                        <div class="input--style-2 center">Don't have an account? <a href="{{ url_for('signup') }}">Sign Up here</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    <!-- Jquery JS-->
+    <script src="static/vendor/jquery/jquery.min.js"></script>
+    <!-- Vendor JS-->
+    <script src="static/vendor/select2/select2.min.js"></script>
+    <script src="static/vendor/datepicker/moment.min.js"></script>
+    <script src="static/vendor/datepicker/daterangepicker.js"></script>
+
+    <!-- Main JS-->
+    <script src="js/global.js"></script>
+    </div>
+
+{% endblock %}

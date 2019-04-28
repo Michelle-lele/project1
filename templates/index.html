@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Title Page-->
+    <title>Book Reviews</title>
+
+    <!-- Icons font CSS-->
+    <link href="static/vendor/mdi-font/css/material-design-iconic-font.min.css" rel="stylesheet" media="all">
+    <link href="static/vendor/font-awesome-4.7/css/font-awesome.min.css" rel="stylesheet" media="all">
+    <!-- Font special for pages-->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i" rel="stylesheet">
+
+    <!-- Vendor CSS-->
+    <link href="static/vendor/select2/select2.min.css" rel="stylesheet" media="all">
+    <link href="static/vendor/datepicker/daterangepicker.css" rel="stylesheet" media="all">
+
+    <!-- Main CSS-->
+    <link href="../static/styles.css" rel="stylesheet" media="all">
+</head>
+
+<body>
+    <div class="topnav">
+        <!-- <a class="active" href="#home">Home</a>--->
+        {% if username %}
+        <a href="{{ url_for('logout') }}">Logout</a>
+        <a href="#">Profile</a>
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        {% elif url_for(request.endpoint) == "signup" %}
+        <a href="{{ url_for('login') }}">Login</a>
+        {% elif url_for(request.endpoint) == "login" %}
+        <a href="{{ url_for('signup') }}">Signup</a>
+        {% else %}
+        <a href="{{ url_for('login') }}">Login</a>
+        <a href="{{ url_for('signup') }}">Signup</a>
+        {% endif %}
+</div> 
+
+   {% block body %}
+
+
+   {% endblock %}
+
+</body><!-- This templates was made by Colorlib (https://colorlib.com) -->
+
+</html>
+<!-- end document-->
