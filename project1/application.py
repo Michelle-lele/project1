@@ -1,11 +1,13 @@
 import os 
 import sys
 
-from flask import Flask, session, render_template, request, redirect
+from flask import Flask, session, render_template, request, redirect, url_for
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from werkzeug.security import check_password_hash, generate_password_hash
+from datetime import timedelta
+from functools import wraps
 
 app = Flask(__name__)
 app.config.from_envvar('APP_SETTINGS')
@@ -15,23 +17,41 @@ if not os.getenv("DATABASE_URL"):
 	raise RuntimeError("DATABASE_URL is not set")
 
 # Configure session to use filesystem
-app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_PERMANENT"] = True
 app.config["SESSION_TYPE"] = "filesystem"
+app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(minutes=60)
 Session(app)
 
 # Set up database
 engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 
+def login_required(f):
+    """
+    Decorate routes to require login.
+    http://flask.pocoo.org/docs/0.12/patterns/viewdecorators/
+    """
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if session.get("user_id") is None:
+            return redirect("/login")
+        global username
+        username = session.get("username")
+        return f(*args, **kwargs)
+    return decorated_function
+
 
 @app.route("/", methods=["POST", "GET"])
 def index():
 	#TO DO
 	#show only if logged in, otherwise redirect to login page
-	return render_template("index.html")
+	return redirect('login')
 
 @app.route("/signup", methods=["POST","GET"])
 def signup():
+	if session.get('user_id'):
+		return redirect('dashboard')
+
 	if request.method == "POST":
 		errorMessages= []
 		#ensure required fields are submitted
@@ -76,11 +96,9 @@ def signup():
 
 		#ensure username doesn't exist
 		NewUserName = request.form.get("username")
-		usernames= db.execute("SELECT username From users").fetchall()
+		usernames= db.execute("SELECT username FROM users").fetchall()
 		#print(usernames, file=sys.stderr)
 		for i in range(len(usernames)):
-			#print(NewUserName, file=sys.stderr)
-			#print(usernames[i][0], file=sys.stderr)
 			if NewUserName == usernames[i][0]:
 				errorMessages.append("Username already exists!")
 				return render_template("signup.html", errorMessages=errorMessages)
@@ -92,7 +110,7 @@ def signup():
 		db.commit()
 		successMessage = "Registration successful!"
 		this = generate_password_hash(request.form.get("password"))
-		print(this, file=sys.stderr)
+		#print(this, file=sys.stderr)
 		#print(successMessage, file=sys.stderr)
 		return render_template("login.html", successMessage=successMessage)
 	return render_template("signup.html")
@@ -100,7 +118,8 @@ def signup():
 @app.route("/login", methods=["POST","GET"])
 def login():
 	# Forget any user_id
-	session.clear()
+	if session.get('user_id'):
+		return redirect('dashboard')
 
 	if request.method == "POST":
 		errorMessages= []
@@ -128,9 +147,10 @@ def login():
 
 		# Remember which user has logged in
 		session["user_id"] = users[0]["user_id"]
+		session["username"] = users[0]["username"]
 
-		# Redirect user to home page
-		return redirect("/")
+		# Redirect user to dashboard page
+		return redirect(url_for('dashboard'))
 
 	# User reached route via GET (as by clicking a link or via redirect)
 	else:
@@ -143,3 +163,8 @@ def logout():
 
 	# Redirect user to login form
 	return redirect("/login")
+
+@app.route("/dashboard")
+@login_required
+def dashboard():
+	return render_template("dashboard.html", username = username)
