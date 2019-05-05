@@ -1,0 +1,25 @@
+{% extends "index.html" %}
+{% block body %}
+
+	<form class="search" method="POST" action="{{ url_for('search') }}">
+        <input type="text" placeholder="Search book title, author or ISNB" name="search"/>
+        <button type="submit"-><i class="fas fa-search"></i></button>
+        {% if errorMessage %}
+        <span class="submit-error-alert">{{ errorMessage }}</span>
+        {% endif %}
+    </form>
+
+    {% for search_result in search_results %}
+
+    <div class="card card-3 wrapper--w960">
+        <div class="card-heading-3"></div>
+            <div class="card-body">
+                <h2 class="title">{{ search_result.title }} ({{ search_result.year }})</h2>
+                <h3>by {{ search_result.author }}</h3>
+                <h4>ISBN: {{ search_result.isbn }}</h4>
+            </div>
+        </div>
+
+    {% endfor %}
+
+{% endblock %}

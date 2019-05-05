@@ -50,7 +50,7 @@ def index():
 @app.route("/signup", methods=["POST","GET"])
 def signup():
 	if session.get('user_id'):
-		return redirect('dashboard')
+		return redirect(url_for('search'))
 
 	if request.method == "POST":
 		errorMessages= []
@@ -119,7 +119,7 @@ def signup():
 def login():
 	# Forget any user_id
 	if session.get('user_id'):
-		return redirect('dashboard')
+		return redirect(url_for('search'))
 
 	if request.method == "POST":
 		errorMessages= []
@@ -149,8 +149,8 @@ def login():
 		session["user_id"] = users[0]["user_id"]
 		session["username"] = users[0]["username"]
 
-		# Redirect user to dashboard page
-		return redirect(url_for('dashboard'))
+		# Redirect user to search page
+		return redirect(url_for('search'))
 
 	# User reached route via GET (as by clicking a link or via redirect)
 	else:
@@ -164,7 +164,31 @@ def logout():
 	# Redirect user to login form
 	return redirect("/login")
 
-@app.route("/dashboard")
+@app.route("/search", methods=["POST", "GET"])
 @login_required
-def dashboard():
-	return render_template("dashboard.html", username = username)
+def search():
+	if request.method == "POST":
+		errorMessage = ""
+		query = request.form.get("search")
+		#print(query, file=sys.stderr)
+		if not query:
+			errorMessage = "Please enter book title, author or ISBN!"
+			return render_template("search.html", username = username, errorMessage = errorMessage)
+		
+		search_results = db.execute("SELECT title, author, isbn, year from books WHERE title ILIKE :query OR author ILIKE :query OR isbn ILIKE :query",
+			{"query": "%" + query + "%"}).fetchall()
+		#print(search_results, file=sys.stderr)
+
+		'''
+		TO DO pagination
+		'''
+
+		#Show message if no results
+		if search_results == []:
+			errorMessage = f"No books found for your search \"{query}\""
+			#print("No results!", file=sys.stderr)
+
+		return render_template("search.html", username = username, search_results=search_results, errorMessage=errorMessage)
+
+
+	return render_template("search.html", username = username)
