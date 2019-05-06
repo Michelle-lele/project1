@@ -4,10 +4,15 @@
 	<form class="search" method="POST" action="{{ url_for('search') }}">
         <input type="text" placeholder="Search book title, author or ISNB" name="search"/>
         <button type="submit"-><i class="fas fa-search"></i></button>
-        {% if errorMessage %}
-        <span class="submit-error-alert">{{ errorMessage }}</span>
-        {% endif %}
     </form>
+
+    {% if errorMessage %}
+         <div class="card card-3 wrapper--w960">
+            <div class="card-body">
+                <h3 class="submit-error-alert center">{{ errorMessage }}</h3>
+            </div>
+        </div>
+        {% endif %}
 
     {% for search_result in search_results %}
 
