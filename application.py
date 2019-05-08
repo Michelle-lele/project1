@@ -43,9 +43,7 @@ def login_required(f):
 
 @app.route("/", methods=["POST", "GET"])
 def index():
-	#TO DO
-	#show only if logged in, otherwise redirect to login page
-	return redirect('login')
+	return redirect(url_for('login'))
 
 @app.route("/signup", methods=["POST","GET"])
 def signup():
@@ -95,13 +93,12 @@ def signup():
 			return render_template("signup.html", errorMessages=errorMessages)
 
 		#ensure username doesn't exist
-		NewUserName = request.form.get("username")
-		usernames= db.execute("SELECT username FROM users").fetchall()
+		username= db.execute("SELECT * FROM users WHERE username = :username", {"username": request.form.get("username")}).fetchall()
 		#print(usernames, file=sys.stderr)
-		for i in range(len(usernames)):
-			if NewUserName == usernames[i][0]:
-				errorMessages.append("Username already exists!")
-				return render_template("signup.html", errorMessages=errorMessages)
+		if len(username) != 0:
+			errorMessages.append("Username already exists!")
+			return render_template("signup.html", errorMessages=errorMessages)
+
 		
 		#create new user in db
 		NewUser = db.execute("INSERT INTO users (username, password, name) VALUES (:username,:password, :name)", 
@@ -109,15 +106,12 @@ def signup():
 			"name": request.form.get("name")})
 		db.commit()
 		successMessage = "Registration successful!"
-		this = generate_password_hash(request.form.get("password"))
-		#print(this, file=sys.stderr)
 		#print(successMessage, file=sys.stderr)
 		return render_template("login.html", successMessage=successMessage)
 	return render_template("signup.html")
 
 @app.route("/login", methods=["POST","GET"])
 def login():
-	# Forget any user_id
 	if session.get('user_id'):
 		return redirect(url_for('search'))
 
@@ -158,10 +152,7 @@ def login():
 
 @app.route("/logout")
 def logout():
-	# Forget any user_id
 	session.clear()
-
-	# Redirect user to login form
 	return redirect("/login")
 
 @app.route("/search", methods=["POST", "GET"])
@@ -183,7 +174,7 @@ def search():
 		#print(search_results, file=sys.stderr)
 
 		'''
-		TO DO pagination
+		TO DO paginate()
 		get search_results count
 		set per_page
 		set default page and page as url arg
@@ -195,9 +186,6 @@ def search():
 		#Show message if no results
 		if search_results == []:
 			errorMessage = f"No books found for your search \"{query}\""
-			#print("No results!", file=sys.stderr)
-
 		return render_template("search.html", username = username, search_results=search_results, errorMessage=errorMessage)
-
 
 	return render_template("search.html", username = username)
