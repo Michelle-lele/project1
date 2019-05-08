@@ -174,6 +174,9 @@ def search():
 		if not query:
 			errorMessage = "Please enter book title, author or ISBN!"
 			return render_template("search.html", username = username, errorMessage = errorMessage)
+
+		page = 1 # request.args.get('page', 1, type=int)
+		per_page = os.getenv("POSTS_PER_PAGE")
 		
 		search_results = db.execute("SELECT title, author, isbn, year from books WHERE title ILIKE :query OR author ILIKE :query OR isbn ILIKE :query",
 			{"query": "%" + query + "%"}).fetchall()
@@ -181,6 +184,12 @@ def search():
 
 		'''
 		TO DO pagination
+		get search_results count
+		set per_page
+		set default page and page as url arg
+		error handling for page number
+		calculate total_pages
+		show pages urls- current, previous and next, first and last only
 		'''
 
 		#Show message if no results
