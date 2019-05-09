@@ -1,5 +1,6 @@
 import os 
 import sys
+import math
 
 from flask import Flask, session, render_template, request, redirect, url_for
 from flask_session import Session
@@ -40,6 +41,52 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+def paginate(items, page):
+	#generate dictionary, with pagination settings
+	
+	if not page or page < 1:
+		page = 1
+
+	#add check for TypeError	
+	num_items = len(items)
+	#print(f"Number of items: {num_items}",  file=sys.stderr)
+	per_page = int(os.getenv("ITEMS_PER_PAGE"))
+	# print(per_page, file=sys.stderr)
+	total_pages = math.ceil(num_items/per_page)
+	#print(f"Total pages: {total_pages}", file=sys.stderr)
+
+	if page > 1:
+		previous_page = page - 1
+	else: 
+		previous_page = None
+
+	if page == total_pages:
+		next_page = None
+	else:
+		next_page = page + 1
+
+	pagination_settings = {}
+	pagination_settings["page"] = page
+	pagination_settings["num_items"] = num_items
+	pagination_settings["per_page"] = per_page
+	pagination_settings["total_pages"] = total_pages
+	pagination_settings["previous_page"] = previous_page
+	pagination_settings["next_page"] = next_page 	
+	print(pagination_settings, file=sys.stderr)
+	
+	# generate a list of the items on the current page
+	first_item_index = (page - 1)* per_page
+	last_item_index = first_item_index + (num_items % per_page) - 1
+
+	page_items = []
+	while first_item_index <= last_item_index:
+		page_items.append(items[first_item_index])
+		print(f"Page items for {first_item_index}: {page_items}", file=sys.stderr)
+		first_item_index += 1
+		
+	
+	template = request.endpoint + ".html"
+	return render_template(template, username=username, page_items=page_items)
 
 @app.route("/", methods=["POST", "GET"])
 def index():
@@ -156,6 +203,7 @@ def logout():
 	return redirect("/login")
 
 @app.route("/search", methods=["POST", "GET"])
+@app.route("/search/<int:page>", methods=["POST", "GET"])
 @login_required
 def search():
 	if request.method == "POST":
@@ -173,15 +221,7 @@ def search():
 			{"query": "%" + query + "%"}).fetchall()
 		#print(search_results, file=sys.stderr)
 
-		'''
-		TO DO paginate()
-		get search_results count
-		set per_page
-		set default page and page as url arg
-		error handling for page number
-		calculate total_pages
-		show pages urls- current, previous and next, first and last only
-		'''
+		paginate(search_results, request.args.get("page"))
 
 		#Show message if no results
 		if search_results == []:
