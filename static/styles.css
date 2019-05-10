@@ -578,6 +578,14 @@ input {
   margin-top: 20px; 
 }
 
+.pagination{
+  margin-bottom: 20px;
+}
+
+.pagination .title{
+  margin: 10px;
+  font-size: 18px;
+}
 @media (max-width: 576px) {
    .card-heading-3{
     display: block !important;

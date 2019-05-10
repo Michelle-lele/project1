@@ -41,25 +41,20 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-def paginate(items, page):
-	print(page,file=sys.stderr)
+def paginate(items, page, query):
 	#generate dictionary, with pagination settings
 	num_items = len(items)
-	#print(f"Number of items: {num_items}",  file=sys.stderr)
 	per_page = int(os.getenv("ITEMS_PER_PAGE"))
-	# print(per_page, file=sys.stderr)
 	total_pages = math.ceil(num_items/per_page)
+	print(query, file=sys.stderr)
 	
 	if not page:
 		page = 1
 
 	if page > total_pages or page < 1:
-		#print(f"True: {page}", file=sys.stderr)
 		return render_template("404.html")
 		#page = 1
 	#add check for TypeError
-
-	#print(f"Total pages: {total_pages}", file=sys.stderr)
 
 	if page > 1:
 		previous_page = page - 1
@@ -77,25 +72,24 @@ def paginate(items, page):
 	pagination_settings["per_page"] = per_page
 	pagination_settings["total_pages"] = total_pages
 	pagination_settings["previous_page"] = previous_page
-	pagination_settings["next_page"] = next_page 	
+	pagination_settings["next_page"] = next_page
 	print(pagination_settings, file=sys.stderr)
 		
 	# generate a list of the items on the current page
 	first_item_index = (page - 1)* per_page
 	if page*per_page > num_items:
-		last_item_index = first_item_index + (num_items % per_page) - 1 #To Do wrong formula
+		last_item_index = first_item_index + (num_items % per_page) - 1
 	else:
 		last_item_index= (page*per_page) -1
 
 	page_items = []
 	while first_item_index <= last_item_index:
 		page_items.append(items[first_item_index])
-		print(f"Page items for {first_item_index}: {page_items}", file=sys.stderr)
 		first_item_index += 1
 		
 		
 	template = request.endpoint + ".html"
-	return render_template(template, username=username, page_items=page_items)
+	return render_template(template, username=username, page_items=page_items, pagination_settings=pagination_settings, query=query)
 
 @app.route("/", methods=["POST", "GET"])
 def index():
@@ -220,7 +214,7 @@ def search():
 		return redirect(query)
 	elif request.method == "GET": 
 		query = request.args.get("q")
-		# TO DO handle multple words in q parameter
+		# ?TO DO handle multple words in q parameter in a separate function?
 	
 	errorMessage = ""
 	#print(query, file=sys.stderr)
@@ -237,7 +231,7 @@ def search():
 		errorMessage = f"No books found for your search \"{query}\""
 		return render_template("search.html", username = username, errorMessage = errorMessage)
 
-	return paginate(search_results, request.args.get('page', type=int))
+	return paginate(search_results, request.args.get('page', type=int), query=query)
 
 
 
