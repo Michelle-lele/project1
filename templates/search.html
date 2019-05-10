@@ -14,17 +14,23 @@
         </div>
         {% endif %}
 
-    {% for search_result in search_results %}
+    {% for page_item in page_items %}
 
     <div class="card card-3 wrapper--w960">
         <div class="card-heading-3"></div>
             <div class="card-body">
-                <h2 class="title">{{ search_result.title }} ({{ search_result.year }})</h2>
-                <h3>by {{ search_result.author }}</h3>
-                <h4>ISBN: {{ search_result.isbn }}</h4>
+                <h2 class="title">{{ page_item.title }} ({{ page_item.year }})</h2>
+                <h3>by {{ page_item.author }}</h3>
+                <h4>ISBN: {{ page_item.isbn }}</h4>
             </div>
         </div>
 
     {% endfor %}
+    <!-- To do build the url for prev. & next page somehow -->
+    <div>    
+    <a href="../search?q={{ query }}">{{ previous_page }} Prev</a>
+    Page {{ page }} of {{ total_pages }}
+    <a href="">{{ next_page }} Next</a>
+    </div>
 
 {% endblock %}

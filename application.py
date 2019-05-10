@@ -42,17 +42,23 @@ def login_required(f):
     return decorated_function
 
 def paginate(items, page):
+	print(page,file=sys.stderr)
 	#generate dictionary, with pagination settings
-	
-	if not page or page < 1:
-		page = 1
-
-	#add check for TypeError	
 	num_items = len(items)
 	#print(f"Number of items: {num_items}",  file=sys.stderr)
 	per_page = int(os.getenv("ITEMS_PER_PAGE"))
 	# print(per_page, file=sys.stderr)
 	total_pages = math.ceil(num_items/per_page)
+	
+	if not page:
+		page = 1
+
+	if page > total_pages or page < 1:
+		#print(f"True: {page}", file=sys.stderr)
+		return render_template("404.html")
+		#page = 1
+	#add check for TypeError
+
 	#print(f"Total pages: {total_pages}", file=sys.stderr)
 
 	if page > 1:
@@ -73,10 +79,13 @@ def paginate(items, page):
 	pagination_settings["previous_page"] = previous_page
 	pagination_settings["next_page"] = next_page 	
 	print(pagination_settings, file=sys.stderr)
-	
+		
 	# generate a list of the items on the current page
 	first_item_index = (page - 1)* per_page
-	last_item_index = first_item_index + (num_items % per_page) - 1
+	if page*per_page > num_items:
+		last_item_index = first_item_index + (num_items % per_page) - 1 #To Do wrong formula
+	else:
+		last_item_index= (page*per_page) -1
 
 	page_items = []
 	while first_item_index <= last_item_index:
@@ -84,7 +93,7 @@ def paginate(items, page):
 		print(f"Page items for {first_item_index}: {page_items}", file=sys.stderr)
 		first_item_index += 1
 		
-	
+		
 	template = request.endpoint + ".html"
 	return render_template(template, username=username, page_items=page_items)
 
@@ -203,29 +212,33 @@ def logout():
 	return redirect("/login")
 
 @app.route("/search", methods=["POST", "GET"])
-@app.route("/search/<int:page>", methods=["POST", "GET"])
+@app.route("/search/<string:query>/<int:page>", methods=["POST", "GET"])
 @login_required
 def search():
 	if request.method == "POST":
-		errorMessage = ""
-		query = request.form.get("search")
-		#print(query, file=sys.stderr)
-		if not query:
-			errorMessage = "Please enter book title, author or ISBN!"
-			return render_template("search.html", username = username, errorMessage = errorMessage)
-
-		page = 1 # request.args.get('page', 1, type=int)
-		per_page = os.getenv("POSTS_PER_PAGE")
+		query = url_for('search') + "?q=" + request.form.get("search") + "&page=1"
+		return redirect(query)
+	elif request.method == "GET": 
+		query = request.args.get("q")
+		# TO DO handle multple words in q parameter
+	
+	errorMessage = ""
+	#print(query, file=sys.stderr)
+	if not query:
+		errorMessage = "Please enter book title, author or ISBN!"
+		return render_template("search.html", username = username, errorMessage = errorMessage)
 		
-		search_results = db.execute("SELECT title, author, isbn, year from books WHERE title ILIKE :query OR author ILIKE :query OR isbn ILIKE :query",
-			{"query": "%" + query + "%"}).fetchall()
-		#print(search_results, file=sys.stderr)
+	search_results = db.execute("SELECT title, author, isbn, year from books WHERE title ILIKE :query OR author ILIKE :query OR isbn ILIKE :query",
+		{"query": "%" + query + "%"}).fetchall()
+	#print(search_results, file=sys.stderr)
 
-		paginate(search_results, request.args.get("page"))
+	#Show message if no results
+	if search_results == []:
+		errorMessage = f"No books found for your search \"{query}\""
+		return render_template("search.html", username = username, errorMessage = errorMessage)
 
-		#Show message if no results
-		if search_results == []:
-			errorMessage = f"No books found for your search \"{query}\""
-		return render_template("search.html", username = username, search_results=search_results, errorMessage=errorMessage)
+	return paginate(search_results, request.args.get('page', type=int))
 
-	return render_template("search.html", username = username)
+
+
+	
