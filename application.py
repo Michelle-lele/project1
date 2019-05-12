@@ -46,7 +46,7 @@ def paginate(items, page, query):
 	num_items = len(items)
 	per_page = int(os.getenv("ITEMS_PER_PAGE"))
 	total_pages = math.ceil(num_items/per_page)
-	print(query, file=sys.stderr)
+	#print(query, file=sys.stderr)
 	
 	if not page:
 		page = 1
@@ -85,8 +85,7 @@ def paginate(items, page, query):
 	page_items = []
 	while first_item_index <= last_item_index:
 		page_items.append(items[first_item_index])
-		first_item_index += 1
-		
+		first_item_index += 1	
 		
 	template = request.endpoint + ".html"
 	return render_template(template, username=username, page_items=page_items, pagination_settings=pagination_settings, query=query)

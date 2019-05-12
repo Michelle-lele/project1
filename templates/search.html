@@ -7,53 +7,52 @@
     </form>
 
     {% if errorMessage %}
-         <div class="card card-3 wrapper--w960">
-            <div class="card-body">
-                <h3 class="submit-error-alert center">{{ errorMessage }}</h3>
-            </div>
+    <div class="card card-3 wrapper--w960">
+        <div class="card-body">
+            <h3 class="submit-error-alert center">{{ errorMessage }}</h3>
         </div>
+    </div>
         {% endif %}
 
     {% for page_item in page_items %}
-
     <div class="card card-3 wrapper--w960">
         <div class="card-heading-3"></div>
-            <div class="card-body">
-                <h2 class="title">{{ page_item.title }} ({{ page_item.year }})</h2>
-                <h3>by {{ page_item.author }}</h3>
-                <h4>ISBN: {{ page_item.isbn }}</h4>
-            </div>
+        <div class="card-body">
+            <h2 class="title">{{ page_item.title }} ({{ page_item.year }})</h2>
+            <h3>by {{ page_item.author }}</h3>
+            <h4>ISBN: {{ page_item.isbn }}</h4>
         </div>
-
+    </div>
     {% endfor %}
+
     <!-- To do build the url for prev. & next page somehow -->
     <div class="pagination center">
         {% if pagination_settings %}
-        {% if pagination_settings['page'] != 1 %}
-        <span class="title"><a href="{{ url_for(request.endpoint) }}?q={{ query }}&page=1"> First </a></span>
-        {% else %}
-        <span class="title">First</span>
-        {% endif %}
+            {% if pagination_settings['page'] != 1 %}
+            <span class="title"><a href="{{ url_for(request.endpoint) }}?q={{ query }}&page=1"> First </a></span>
+            {% else %}
+            <span class="title">First</span>
+            {% endif %}
 
-        {% if pagination_settings['previous_page'] %}    
-        <span class="title"><a href="{{ url_for(request.endpoint) }}?q={{ query }}&page={{ pagination_settings['previous_page'] }}"> Previous </a></span>
-        {% else %}
-        <span class="title">Previous</span>
-        {% endif %}
+            {% if pagination_settings['previous_page'] %}    
+            <span class="title"><a href="{{ url_for(request.endpoint) }}?q={{ query }}&page={{ pagination_settings['previous_page'] }}"> Previous </a></span>
+            {% else %}
+            <span class="title">Previous</span>
+            {% endif %}
 
-        <span class="title">Page {{ pagination_settings['page'] }} of {{ pagination_settings['total_pages'] }}</span>
+            <span class="title">Page {{ pagination_settings['page'] }} of {{ pagination_settings['total_pages'] }}</span>
 
-        {% if pagination_settings['next_page'] %} 
-        <span class="title"><a href="{{ url_for(request.endpoint) }}?q={{ query }}&page={{ pagination_settings['next_page'] }}">Next</a></span>
-        {% else %}
-        <span class="title">Next</span>
-        {% endif %}
+            {% if pagination_settings['next_page'] %} 
+            <span class="title"><a href="{{ url_for(request.endpoint) }}?q={{ query }}&page={{ pagination_settings['next_page'] }}">Next</a></span>
+            {% else %}
+            <span class="title">Next</span>
+            {% endif %}
 
-        {% if pagination_settings['total_pages'] != pagination_settings['page'] %}
-        <span class="title"><a href="{{ url_for(request.endpoint) }}?q={{ query }}&page={{ pagination_settings['total_pages']}}"> Last </a></span>
-        {% else %}
-        <span class="title">Last</span>
-        {% endif %}
+            {% if pagination_settings['total_pages'] != pagination_settings['page'] %}
+            <span class="title"><a href="{{ url_for(request.endpoint) }}?q={{ query }}&page={{ pagination_settings['total_pages']}}"> Last </a></span>
+            {% else %}
+            <span class="title">Last</span>
+            {% endif %}
         {% endif %}
 
     </div>
