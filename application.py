@@ -209,18 +209,19 @@ def logout():
 @app.route("/search/<string:query>/<int:page>", methods=["POST", "GET"])
 @login_required
 def search():
-	if request.method == "POST":
+	errorMessage = ""
+	if request.method == "GET": 
+		query = request.args.get("q")
+		if not query:
+			return render_template("search.html", username = username)
+		#print(query, file=sys.stderr)
+		# ?TO DO handle multple words in q parameter in a separate function?
+	elif request.method == "POST":
+		if not request.form.get("search"):
+			errorMessage = "Please enter book title, author or ISBN!"
+			return render_template("search.html", username = username, errorMessage = errorMessage)
 		query = url_for('search') + "?q=" + request.form.get("search") + "&page=1"
 		return redirect(query)
-	elif request.method == "GET": 
-		query = request.args.get("q")
-		# ?TO DO handle multple words in q parameter in a separate function?
-	
-	errorMessage = ""
-	#print(query, file=sys.stderr)
-	if not query:
-		errorMessage = "Please enter book title, author or ISBN!"
-		return render_template("search.html", username = username, errorMessage = errorMessage)
 		
 	search_results = db.execute("SELECT title, author, isbn, year from books WHERE title ILIKE :query OR author ILIKE :query OR isbn ILIKE :query",
 		{"query": "%" + query + "%"}).fetchall()
