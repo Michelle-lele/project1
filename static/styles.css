@@ -674,9 +674,17 @@ input {
 }
 
 .search::after {
-  content: "";
   clear: both;
   display: table;
+}
+
+.search-item h3, .search-item h4  {
+  color: black;
+}
+
+.book_details{
+  margin: 10px auto;
+  max-width: 30%;
 }
 
 input {

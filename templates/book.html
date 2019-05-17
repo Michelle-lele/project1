@@ -1,0 +1,8 @@
+{% extends "index.html" %}
+{% block body %}
+<div class="book_details center">
+	<h2 class="title">{{ book_details.title }} ({{ book_details.year }})</h2>
+    <h3>by {{ book_details.author }}</h3>
+    <h4>ISBN: {{ book_details.isbn }}</h4>
+</div>
+{% endblock %}

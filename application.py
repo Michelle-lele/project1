@@ -233,6 +233,18 @@ def search():
 
 	return paginate(search_results, request.args.get('page', type=int), query=query)
 
+@app.route("/book", methods=["POST", "GET"])
+@app.route("/book/<string:isbn>", methods=["POST", "GET"])
+@login_required
+def book():
+	if request.method == "GET":
+		if not request.args.get("isbn"):
+			return redirect("search")
+		book_details = db.execute("SELECT title, author, isbn, year from books WHERE isbn = :isbn", 
+			{"isbn": request.args.get("isbn")}).fetchone()
+		print(book_details, file=sys.stderr)
+	return render_template("book.html", username = username, book_details = book_details)
+
 
 
 	
