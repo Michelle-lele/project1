@@ -25,12 +25,10 @@
 
 <body>
     <div class="topnav">
-        {% if username %}
-        <span class="greeting"><h3>Hello, {{ username }}</h3></span>
-        {% endif %}
-        <!-- <a class="active" href="#home">Home</a>--->
+        <span class="logo">Book Reviews</span>
         {% if username %}
         <a href="{{ url_for('logout') }}">Logout</a>
+        <span class="greeting"><h3>Hello, {{ username }}</h3></span>
         {% elif url_for(request.endpoint) == "signup" %}
         <a href="{{ url_for('login') }}">Login</a>
         {% elif url_for(request.endpoint) == "login" %}

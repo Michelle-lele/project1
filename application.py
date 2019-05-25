@@ -52,7 +52,7 @@ def paginate(items, page, query):
 		page = 1
 
 	if page > total_pages or page < 1:
-		return render_template("404.html")
+		return render_template("404.html", username=username)
 		#page = 1
 	#add check for TypeError
 
