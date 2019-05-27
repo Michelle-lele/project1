@@ -551,6 +551,8 @@ input, textarea {
   -moz-box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.35);
   box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.35);
 }
+
+
 .card-3 .card-heading-3 {
   background: url("../static/media/green_book_t.jpg") top left/cover no-repeat;
   width: 200px;
@@ -626,13 +628,17 @@ input, textarea {
   font-size: 18px;
 }
 @media (max-width: 576px) {
-   .card-heading-3{
+   .card-heading-3, .review .card-heading{
     display: block !important;
     width: 100% !important;
   }
 
   .card-body{
     display: block !important;
+  }
+
+  .greeting{
+    display: none;
   }
 }
 
@@ -731,9 +737,11 @@ input, textarea {
   color: black;
 }
 
-.book_details{
-  margin: 10px auto;
+.book-details{
+  margin: 20px auto;
   max-width: 400px;
+  min-width: 200px;
+  padding-bottom: 10px;
 }
 
 input, textarea {

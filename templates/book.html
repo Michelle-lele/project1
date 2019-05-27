@@ -1,7 +1,7 @@
 {% extends "index.html" %}
 {% block body %}
 <!-- TO DO back to search with last performed query, write to the cookie? -->
-<div class="book_details center">
+<div class="book-details center">
 	<h2 class="title">{{ book_details.title }} ({{ book_details.year }})</h2>
     <h3>by {{ book_details.author }}</h3>
     <h4>ISBN: {{ book_details.isbn }}</h4>
@@ -39,12 +39,10 @@
                         </ul>
                     </div>
                     {% endif %}
-                        <div class="input-group">
-                            <label for="password" class="input--style-2 required">Review</label>
-                    		<textarea class="input--style-2 required" placeholder="" name="review_text" rows="2"></textarea> 
-                		</div>
+                            <label for="review_text" class="input--style-2 required">Review</label>
+                    		<textarea class="input--style-2" placeholder="" name="review_text" rows="3"></textarea> 
                 <div class="p-t-20">
-                     <button class="btn btn--radius btn--green" type="submit">Submit Review</button>
+                     <button class="btn btn--radius btn--green" type="submit">Review Book</button>
                 </div>
             </form>
         </div>
@@ -53,7 +51,8 @@
 <div class="card card-3 wrapper--w960">
     <div class="search-item"> 
         <div class="card-body">
-            <h2 class="title">Reviewer name + rating</h2>
+            <h2 class="title">&#9733;&#9733;&#9733;&#9733;&#9733;</h2>
+            <h2 class="title"> by Someone</h2>
             <p>Review text...Lorem ipsum goes here, need to think of limitation for the lenght of reveiw and show more..:P</p>
         </div>
     </div>
@@ -62,7 +61,8 @@
 <div class="card card-3 wrapper--w960">
     <div class="search-item"> 
         <div class="card-body">
-            <h2 class="title">Reviewer name + rating</h2>
+            <h2 class="title"> &#9733;&#9733;&#9733;&#9733;&#9733;</h2>
+            	<h2 class="title">by Michelle-lele</h2>
             <p>Review text...Lorem ipsum goes here, need to think of limitation for the lenght of reveiw and show more..:P Review text...Lorem ipsum goes here, need to think of limitation for the lenght of reveiw and show more..:P Review text...Lorem ipsum goes here, need to think of limitation for the lenght of reveiw and show more..:P Review text...Lorem ipsum goes here, need to think of limitation for the lenght of reveiw and show more..:P</p>
         </div>
     </div>
