@@ -240,9 +240,18 @@ def book():
 	if request.method == "GET":
 		if not request.args.get("isbn"):
 			return redirect("search")
-		book_details = db.execute("SELECT title, author, isbn, year from books WHERE isbn = :isbn", 
+	book_details = db.execute("SELECT title, author, isbn, year from books WHERE isbn = :isbn", 
 			{"isbn": request.args.get("isbn")}).fetchone()
-		print(book_details, file=sys.stderr)
+	#print(book_details, file=sys.stderr)
+	if request.method == "POST":
+		errorMessages = []
+		if not request.form.get("rating"):
+			errorMessages.append("Rating is required!")
+		print(request.form.get("rating"), file=sys.stderr)
+		if not request.form.get("review_text"):
+			errorMessages.append("Review text is required!")
+		if errorMessages != []:
+			return render_template("book.html", username = username, book_details = book_details, errorMessages=errorMessages)
 	return render_template("book.html", username = username, book_details = book_details)
 
 

@@ -521,7 +521,8 @@ input, textarea {
 
 .review .card-heading {
   display: table-cell;
-  padding: 20px;
+  padding: 30px;
+  padding-right: 15px;
 }
 
 .card-2 .card-body {
@@ -563,10 +564,12 @@ input, textarea {
 
 .card-3 .card-body {
   display: table-cell;
-  padding: 30px 60px;
-  padding-bottom: 50px;
+  padding: 30px;
 }
 
+.review .card-body{
+  width: 65%;
+}
 .review {
   max-width: ;
 }
@@ -579,10 +582,16 @@ input, textarea {
   
 }
 
-.rating button{
+.rating button, .review .star-unselected {
   height: 40px;
   font-size: 40px;
   color: lightgrey;
+}
+
+.review .star-selected{
+  height: 40px;
+  font-size: 40px;
+  color: #f4e542;
 }
 
 .rating button:hover,
@@ -639,6 +648,11 @@ input, textarea {
 
   .greeting{
     display: none;
+  }
+
+  .review .card-body{
+    margin: auto;
+    width: 100%;
   }
 }
 
