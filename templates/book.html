@@ -12,12 +12,22 @@
     <div class="review card card-3">
 		<div class="card-heading">
 			<label for="rating" class="input--style-2 required">Rating</label>
-			<div class="input-group rating">
+			<div class="input-group rating">			
+				<select name="rating">
+					<option value="1">1</option>
+					<option value="2">2</option>
+					<option value="3" selected>3</option>
+					<option value="4">4</option>
+					<option value="5">5</option>
+				</select>
+				<!--
+				<input type="hidden" name="rating" value="3">
   				<button type="button" name="rating" value="5">&#9733;</button>
   				<button type="button" name="rating" value="4">&#9733;</button>
   				<button type="button" name="rating" value="3">&#9733;</button>
   				<button type="button" name="rating" value="2">&#9733;</button>
   				<button type="button" name="rating" value="1">&#9733;</button>
+  				-->
             </div>
             <h2 class="title"> by {{ username }}</h2>
 		</div>
@@ -49,25 +59,26 @@
     </div>
 
 <div class="review card card-3 wrapper--w960">
-    <div class="search-item"> 
-        <div class="card-body">
-            <span class="star-selected">&#9733;&#9733;&#9733;&#9733;</span>
-            <span class="star-unselected">&#9733;</span>
-            <h2 class="title"> by Someone</h2>
+    <div class="card-heading">
+   	 	<span class="star-selected">&#9733;&#9733;&#9733;&#9733;</span>
+        <span class="star-unselected">&#9733;</span>
+        <h2 class="title"> by Someone</h2>
+    </div>
+    <div class="card-body">
             <p>Review text...Lorem ipsum goes here, need to think of limitation for the lenght of reveiw and show more..:P
             Review text...Review text...Review text...Review text...</p>
-        </div>
     </div>
 </div>
 <div class="review card card-3 wrapper--w960">
-    <div class="search-item"> 
-        <div class="card-body">
-            <span class="star-selected">&#9733;&#9733;</span>
-            <span class="star-unselected">&#9733;&#9733;&#9733;</span>
-            <h2 class="title"> by Else</h2>
+    <div class="card-heading">
+   	 	<span class="star-selected">&#9733;&#9733;</span>
+        <span class="star-unselected">&#9733;&#9733;&#9733;</span>
+        <h2 class="title"> by Else</h2>
+    </div>
+    <div class="card-body">
             <p>This book is just amazing, but I'll give 2 stars..</p>
-        </div>
     </div>
 </div>
 
 {% endblock %}
+

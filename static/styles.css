@@ -570,6 +570,10 @@ input, textarea {
 .review .card-body{
   width: 65%;
 }
+
+.review .card-body p{
+  font-size: 18px;
+}
 .review {
   max-width: ;
 }
