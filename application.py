@@ -1,6 +1,7 @@
 import os 
 import sys
 import math
+import requests
 
 from flask import Flask, session, render_template, request, redirect, url_for
 from flask_session import Session
@@ -52,7 +53,7 @@ def paginate(items, page, query):
 		page = 1
 
 	if page > total_pages or page < 1:
-		return render_template("404.html", username=username)
+		return render_template("404.html", username=username),404	
 		#page = 1
 	#add check for TypeError
 
@@ -237,26 +238,61 @@ def search():
 @app.route("/book/<string:isbn>", methods=["POST", "GET"])
 @login_required
 def book():
-	if request.method == "GET":
-		if not request.args.get("isbn"):
-			return redirect("search")
+	'''
+	#TO DO back to search results
+	#TO DO paginating reviews
+	#TO DO have the user review on top 
+	'''
+	if not request.args.get("isbn"):
+		return redirect("search")
+
 	isbn= request.args.get("isbn")
+	url= url_for('book')+"?isbn=" + isbn
+
 	book_details = db.execute("SELECT title, author, isbn, year from books WHERE isbn = :isbn", 
 			{"isbn": request.args.get("isbn")}).fetchone()
-	print(isbn, file=sys.stderr)
-	#print(book_details, file=sys.stderr)
+	user_reviews = db.execute("SELECT username, rating, review_text, user_id from users JOIN reviews ON users_user_id = user_id WHERE books_isbn = :isbn ORDER BY date_created DESC",
+		{"isbn": isbn}).fetchall()
+
+	#check if user has already left a review
+	UserLeftReview = False
+	i = 0
+	for user in user_reviews:
+		if user_reviews[i][3] == session.get("user_id"):
+				UserLeftReview = True
+		i+=1
+	
+	# Get GoodReads average rating
+	GetBookReviewCounts = requests.get("https://www.goodreads.com/book/review_counts.json?isbns=" + isbn).json()
+
 	if request.method == "POST":
 		errorMessages = []
 		if not request.form.get("rating"):
 			errorMessages.append("Rating is required!")
-		#print(request.form.get("rating"), file=sys.stderr)
 		if not request.form.get("review_text"):
 			errorMessages.append("Review text is required!")
+		'''
+		#check if user has already left a review
+		UserReview = db.execute("SELECT COUNT(*) from reviews WHERE users_user_id = :user_id AND books_isbn = :isbn",
+			{"user_id": session.get("user_id"), "isbn": isbn}).fetchall()
+		
+		if UserReview[0][0] > 0: 
+			UserLeftReview = True
+			errorMessages.append("You have already left a review!")
+		'''
+
 		if errorMessages != []:
-			return render_template("book.html", username = username, book_details = book_details, errorMessages=errorMessages)
-		return redirect(url_for('book',**request.args))
-	return render_template("book.html", username = username, book_details = book_details, isbn = isbn)
+			return render_template("book.html", username = username, book_details = book_details, 
+				user_reviews=user_reviews, UserLeftReview=UserLeftReview, errorMessages=errorMessages,
+				GetBookReviewCounts=GetBookReviewCounts)
+		#print(request.form.get("rating"), file=sys.stderr)
+		#print(request.form.get("review_text"), file=sys.stderr)
+		NewReview = db.execute("INSERT INTO reviews (users_user_id, books_isbn, rating, review_text) VALUES (:user_id, :isbn, :rating, :review_text)", 
+			{"user_id": session.get("user_id"), "isbn": isbn, 
+			"rating": request.form.get("rating"), "review_text": request.form.get("review_text")})
+		db.commit()
+		return redirect(url)
 
-
-
-	
+	return render_template("book.html", username = username, book_details = book_details, 
+		user_reviews=user_reviews, UserLeftReview=UserLeftReview, isbn = isbn,
+		GetBookReviewCounts=GetBookReviewCounts)
