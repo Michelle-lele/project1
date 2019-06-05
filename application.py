@@ -3,7 +3,7 @@ import sys
 import math
 import requests
 
-from flask import Flask, session, render_template, request, redirect, url_for
+from flask import Flask, session, render_template, request, redirect, url_for, jsonify,g
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -310,7 +310,33 @@ def book():
 		user_reviews=user_reviews, UserLeftReview=UserLeftReview, isbn = isbn,
 		GetBookReviewCounts=GetBookReviewCounts)
 
-
+@app.route("/api")
 @app.route("/api/<isbn>", methods=['GET'])
 def api(isbn):
-	return "<h1>Hello, world! I am an API!</h1>"
+	#TO DO how to return 404 instead of error if isbn is missing
+	if not isbn:
+		return jsonify(isbn= isbn, error="Book not found!", status = 404), 404
+
+	book_details = db.execute("SELECT title, author, year, isbn from books WHERE isbn = :isbn", 
+			{"isbn": isbn}).fetchone()
+
+	#check if such book exists
+	if book_details == None:
+		return jsonify(isbn= isbn, error="Book not found!", status = 404), 404
+			
+	title = book_details['title']
+	author = book_details['author']
+	year = book_details['year']
+
+	review_count = db.execute("SELECT COUNT(*) from reviews WHERE books_isbn = :isbn",
+		{"isbn": isbn}).fetchall()
+	review_count = review_count[0][0]
+	if review_count > 0:
+		average_rating = db.execute("SELECT AVG(rating) from reviews WHERE books_isbn = :isbn",
+			{"isbn": isbn}).fetchall()
+		average_rating = float(average_rating[0][0])
+	else: 
+		average_rating = None
+
+	return jsonify(title = title, author = author, year=year, isbn=isbn, review_count= review_count, 
+		average_rating=average_rating)
