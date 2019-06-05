@@ -6,7 +6,8 @@
     <h3>by {{ book_details.author }}</h3>
     <h4>ISBN: {{ book_details.isbn }}</h4>
 </div>
-<!--
+
+{% if GetBookReviewCounts %}
 <div class="wrapper wrapper--w960">
 	<div class="review card card-3">
 		<div class="card-heading">
@@ -14,11 +15,11 @@
 			<h2 class="title"> by GoodReads</h2>
 		</div>
 		<div class="card-body">
-			<h3>Rating: {{ GetBookReviewCounts['books'][0]['average_rating'] }}</h3>
+			<h3>Out of {{ GetBookReviewCounts['books'][0]['ratings_count'] }} ratings!</h3>
 		</div>
 	</div>
 </div>
--->
+{% endif %}
 
 <!--{{ username|pprint}}
 {{ user_reviews[user]|pprint }}

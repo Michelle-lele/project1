@@ -28,6 +28,8 @@ Session(app)
 engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 
+
+# TO DO 404 function & page
 def login_required(f):
     """
     Decorate routes to require login.
@@ -223,7 +225,7 @@ def search():
 		query = url_for('search') + "?q=" + request.form.get("search") + "&page=1"
 		return redirect(query)
 		
-	search_results = db.execute("SELECT title, author, isbn, year from books WHERE title ILIKE :query OR author ILIKE :query OR isbn ILIKE :query",
+	search_results = db.execute("SELECT title, author, isbn, year from books WHERE title ILIKE :query OR author ILIKE :query OR isbn ILIKE :query ORDER BY title ASC",
 		{"query": "%" + query + "%"}).fetchall()
 	#print(search_results, file=sys.stderr)
 
@@ -241,20 +243,28 @@ def book():
 	'''
 	#TO DO back to search results
 	#TO DO paginating reviews
-	#TO DO have the user review on top 
+	#TO DO have the user review on top
+	#TO DO handle if no results are recieved by GoodReads
 	'''
 	if not request.args.get("isbn"):
 		return redirect("search")
 
+	#flask.g.isbn= request.args.get("isbn")
 	isbn= request.args.get("isbn")
 	url= url_for('book')+"?isbn=" + isbn
 
 	book_details = db.execute("SELECT title, author, isbn, year from books WHERE isbn = :isbn", 
-			{"isbn": request.args.get("isbn")}).fetchone()
+			{"isbn": isbn}).fetchone()
+
+	#check if such book exists
+	if book_details == None:
+		return render_template("404.html", username=username),404
+
 	user_reviews = db.execute("SELECT username, rating, review_text, user_id from users JOIN reviews ON users_user_id = user_id WHERE books_isbn = :isbn ORDER BY date_created DESC",
 		{"isbn": isbn}).fetchall()
 
 	#check if user has already left a review
+	#TO DO that in more normal way :D
 	UserLeftReview = False
 	i = 0
 	for user in user_reviews:
@@ -262,8 +272,12 @@ def book():
 				UserLeftReview = True
 		i+=1
 	
-	# Get GoodReads average rating
-	GetBookReviewCounts = requests.get("https://www.goodreads.com/book/review_counts.json?isbns=" + isbn).json()
+	# Get GoodReads average rating and ratings count
+	GetBookReviewCounts = requests.get("https://www.goodreads.com/book/review_counts.json?isbns=" + isbn)
+	if GetBookReviewCounts.status_code != 200:
+		GetBookReviewCounts == None
+	else:
+		GetBookReviewCounts = GetBookReviewCounts.json()
 
 	if request.method == "POST":
 		errorMessages = []
@@ -285,8 +299,7 @@ def book():
 			return render_template("book.html", username = username, book_details = book_details, 
 				user_reviews=user_reviews, UserLeftReview=UserLeftReview, errorMessages=errorMessages,
 				GetBookReviewCounts=GetBookReviewCounts)
-		#print(request.form.get("rating"), file=sys.stderr)
-		#print(request.form.get("review_text"), file=sys.stderr)
+		
 		NewReview = db.execute("INSERT INTO reviews (users_user_id, books_isbn, rating, review_text) VALUES (:user_id, :isbn, :rating, :review_text)", 
 			{"user_id": session.get("user_id"), "isbn": isbn, 
 			"rating": request.form.get("rating"), "review_text": request.form.get("review_text")})
@@ -296,3 +309,8 @@ def book():
 	return render_template("book.html", username = username, book_details = book_details, 
 		user_reviews=user_reviews, UserLeftReview=UserLeftReview, isbn = isbn,
 		GetBookReviewCounts=GetBookReviewCounts)
+
+
+@app.route("/api/<isbn>", methods=['GET'])
+def api(isbn):
+	return "<h1>Hello, world! I am an API!</h1>"
