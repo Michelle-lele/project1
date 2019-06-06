@@ -3,7 +3,7 @@
 
 	<form class="search" method="POST" action="{{ url_for('search') }}">
         
-        <input type="text" placeholder="Search book title, author or ISNB" name="search" {% if query %} value="{{ query }} {% endif %}"/>
+        <input type="text" placeholder="Search book title, author or ISBN" name="search" {% if query %} value="{{ query }} {% endif %}"/>
         
         <button type="submit"-><i class="fas fa-search"></i></button>
     </form>
@@ -51,7 +51,12 @@
     <div class="card card-3 wrapper--w960">
         <a href="{{ url_for('book') }}?isbn={{ page_item.isbn }}">
         <div class="search-item"> 
-            <div class="card-heading-3"></div>
+            {% if page_item.cover_img %}
+            <div class="card-heading-3" style="background: url({{ page_item.cover_img }}) top left/cover no-repeat;">
+            {% else %}
+            <div class="card-heading-3" style="background: url('../static/media/green_book_t.jpg') top left/cover no-repeat;">
+            {% endif %}
+            </div>
             <div class="card-body">
                 <h2 class="title">{{ page_item.title }} ({{ page_item.year }})</h2>
                 <h3>by {{ page_item.author }}</h3>
@@ -61,6 +66,37 @@
         </a>
     </div>
     {% endfor %}
+
+{% if not page_items %}
+    <h1 class="title center"> TOP 3 Rated books</h1>
+    {% for top_rated_book in top_rated_books %}
+    <div class="card card-3 wrapper--w960">
+        <a href="{{ url_for('book') }}?isbn={{ top_rated_book.isbn }}">
+        <div class="search-item"> 
+            {% if top_rated_book.cover_img %}
+            <div class="card-heading-3" style="background: url({{ top_rated_book.cover_img }}) top left/cover no-repeat;">
+            {% else %}
+            <div class="card-heading-3" style="background: url('../static/media/green_book_t.jpg') top left/cover no-repeat;">
+            {% endif %}
+            </div>
+            <div class="card-body">
+                <h2 class="title">{{ top_rated_book.title }} ({{ top_rated_book.year }})</h2>
+                <h3>by {{ top_rated_book.author }}</h3>
+                <h4>ISBN: {{ top_rated_book.isbn }}</h4>
+
+                {% for rating in range(top_rated_book[0]|int) %}
+                <span class="star-selected">&#9733;</span>
+                {% endfor %}
+
+                {% for rating in range(5 - top_rated_book[0]|int) %}
+                <span class="star-unselected">&#9733;</span>
+                {% endfor %}
+            </div>
+        </div>
+        </a>
+    </div>
+    {% endfor %}
+{% endif %}
 
     <div class="pagination center">
         {% if pagination_settings %}

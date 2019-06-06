@@ -45,6 +45,7 @@ def login_required(f):
     return decorated_function
 
 def paginate(items, page, query):
+	#TODO change the paging implementation to use LIMIT & OFFSET before using in on another places.
 	#generate dictionary, with pagination settings
 	num_items = len(items)
 	per_page = int(os.getenv("ITEMS_PER_PAGE"))
@@ -57,7 +58,7 @@ def paginate(items, page, query):
 	if page > total_pages or page < 1:
 		return render_template("404.html", username=username),404	
 		#page = 1
-	#TO DO add check for TypeError
+	#TODO add check for TypeError
 
 	if page > 1:
 		previous_page = page - 1
@@ -212,27 +213,29 @@ def logout():
 @login_required
 def search():
 	errorMessage = ""
-	if request.method == "GET": 
+	top_rated_books = db.execute("SELECT AVG(rating), title,author,isbn, year, cover_img from books JOIN reviews ON books_isbn = isbn GROUP BY isbn ORDER BY AVG(rating) DESC LIMIT 3").fetchall()
+	
+	if request.method == "GET":
 		query = request.args.get("q")
 		if not query:
-			return render_template("search.html", username = username)
+			return render_template("search.html", username = username, top_rated_books=top_rated_books)
 		#print(query, file=sys.stderr)
 		# ?TO DO handle multple words in q parameter in a separate function?
 	elif request.method == "POST":
 		if not request.form.get("search"):
 			errorMessage = "Please enter book title, author or ISBN!"
-			return render_template("search.html", username = username, errorMessage = errorMessage)
+			return render_template("search.html", username = username, errorMessage = errorMessage, top_rated_books=top_rated_books)
 		query = url_for('search') + "?q=" + request.form.get("search") + "&page=1"
 		return redirect(query)
 		
-	search_results = db.execute("SELECT title, author, isbn, year from books WHERE title ILIKE :query OR author ILIKE :query OR isbn ILIKE :query ORDER BY title ASC",
+	search_results = db.execute("SELECT title, author, isbn, year, cover_img from books WHERE title ILIKE :query OR author ILIKE :query OR isbn ILIKE :query ORDER BY title ASC",
 		{"query": "%" + query + "%"}).fetchall()
 	#print(search_results, file=sys.stderr)
 
 	#Show message if no results
 	if search_results == []:
 		errorMessage = f"No books found for your search \"{query}\""
-		return render_template("search.html", username = username, errorMessage = errorMessage)
+		return render_template("search.html", username = username, errorMessage = errorMessage, top_rated_books=top_rated_books)
 
 	return paginate(search_results, request.args.get('page', type=int), query=query)
 
@@ -241,10 +244,9 @@ def search():
 @login_required
 def book():
 	'''
-	#TO DO back to search results
-	#TO DO paginating reviews
-	#TO DO have the user review on top
-	#TO DO handle if no results are recieved by GoodReads
+	#TODO back to search results in a cookie
+	#TODO paginating reviews
+	#TODO have the user review on top
 	'''
 	if not request.args.get("isbn"):
 		return redirect("search")
@@ -264,7 +266,7 @@ def book():
 		{"isbn": isbn}).fetchall()
 
 	#check if user has already left a review
-	#TO DO that in more normal way :D
+	#TODO that in more normal way :D
 	UserLeftReview = False
 	i = 0
 	for user in user_reviews:
@@ -313,7 +315,7 @@ def book():
 @app.route("/api")
 @app.route("/api/<isbn>", methods=['GET'])
 def api(isbn):
-	#TO DO how to return 404 instead of error if isbn is missing
+	#TODO how to return 404 instead of error if isbn is missing
 	if not isbn:
 		return jsonify(isbn= isbn, error="Book not found!", status = 404), 404
 

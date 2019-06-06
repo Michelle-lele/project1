@@ -25,7 +25,7 @@
 
 <body>
     <div class="topnav">
-        <span class="logo">Book Reviews</span>
+        <span class="logo"><a href="{{ url_for('index') }}"> Book Reviews</a></span>
         {% if username %}
         <a href="{{ url_for('logout') }}">Logout</a>
         <span class="greeting"><h3>Hello, {{ username }}</h3></span>

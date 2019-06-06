@@ -554,12 +554,16 @@ input, textarea {
 }
 
 
-.card-3 .card-heading-3 {
-  background: url("../static/media/green_book_t.jpg") top left/cover no-repeat;
-  width: 200px;
-  min-width: 200px;
-  height: 250px;
+.card-3 .card-heading-3{
+  /*background: url("") top left/cover no-repeat;*/
+  width: 150px;
+  min-width: 100px;
+  height: 230px;
   display: table-cell;
+}
+.card-3 .card-heading-3 img{
+  width: 200px;
+  margin: 0;
 }
 
 .card-3 .card-body {
@@ -586,13 +590,13 @@ input, textarea {
   
 }
 
-.rating button, .review .star-unselected {
+.rating button, .review .star-unselected, .star-unselected {
   height: 40px;
   font-size: 40px;
   color: lightgrey;
 }
 
-.review .star-selected{
+.review .star-selected, .star-selected{
   height: 40px;
   font-size: 40px;
   color: #f4e542;
