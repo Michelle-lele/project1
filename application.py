@@ -255,7 +255,7 @@ def book():
 	isbn= request.args.get("isbn")
 	url= url_for('book')+"?isbn=" + isbn
 
-	book_details = db.execute("SELECT title, author, isbn, year from books WHERE isbn = :isbn", 
+	book_details = db.execute("SELECT title, author, isbn, year, cover_img, AVG(rating) from books JOIN reviews ON isbn = books_isbn WHERE isbn = :isbn GROUP BY isbn", 
 			{"isbn": isbn}).fetchone()
 
 	#check if such book exists

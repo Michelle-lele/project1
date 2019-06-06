@@ -771,10 +771,15 @@ input, textarea {
   color: black;
 }
 
+.book-details img{
+  width: 160px;
+  text-align: center;
+}
+
 .book-details{
-  margin: 20px auto;
-  max-width: 400px;
+  margin: 20px;
   min-width: 200px;
+  max-width: 250px;
   padding-bottom: 10px;
 }
 

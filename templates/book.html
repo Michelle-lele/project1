@@ -1,7 +1,8 @@
 {% extends "index.html" %}
 {% block body %}
 <!-- TO DO back to search with last performed query, write to the cookie? -->
-<div class="book-details center">
+<div class="book-details">
+	<img class="" src={{ book_details.cover_img }}>
 	<h2 class="title">{{ book_details.title }} ({{ book_details.year }})</h2>
     <h3>by {{ book_details.author }}</h3>
     <h4>ISBN: {{ book_details.isbn }}</h4>
