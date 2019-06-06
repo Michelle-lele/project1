@@ -57,7 +57,7 @@ def paginate(items, page, query):
 	if page > total_pages or page < 1:
 		return render_template("404.html", username=username),404	
 		#page = 1
-	#add check for TypeError
+	#TO DO add check for TypeError
 
 	if page > 1:
 		previous_page = page - 1
@@ -76,7 +76,7 @@ def paginate(items, page, query):
 	pagination_settings["total_pages"] = total_pages
 	pagination_settings["previous_page"] = previous_page
 	pagination_settings["next_page"] = next_page
-	print(pagination_settings, file=sys.stderr)
+	# print(pagination_settings, file=sys.stderr)
 		
 	# generate a list of the items on the current page
 	first_item_index = (page - 1)* per_page
