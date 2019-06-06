@@ -2,7 +2,9 @@
 {% block body %}
 
 	<form class="search" method="POST" action="{{ url_for('search') }}">
-        <input type="text" placeholder="Search book title, author or ISNB" name="search"/>
+        
+        <input type="text" placeholder="Search book title, author or ISNB" name="search" {% if query %} value="{{ query }} {% endif %}"/>
+        
         <button type="submit"-><i class="fas fa-search"></i></button>
     </form>
 
