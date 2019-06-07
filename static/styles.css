@@ -126,6 +126,7 @@ body {
   font-family: "Roboto", "Arial", "Helvetica Neue", sans-serif;
   font-weight: 400;
   font-size: 14px;
+  height: 100%;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -538,7 +539,7 @@ input, textarea {
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
   border-radius: 10px;
-  width: 95%;
+  width: 70%;
   min-width: 250px;
   display: table;
   min-height: 150px;
@@ -553,6 +554,9 @@ input, textarea {
   box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.35);
 }
 
+.card-3 .card-heading{
+  width: 250px;
+}
 
 .card-3 .card-heading-3{
   /*background: url("") top left/cover no-repeat;*/
@@ -571,16 +575,15 @@ input, textarea {
   padding: 30px;
 }
 
-.review .card-body{
-  width: 65%;
-}
-
 .review .card-body p{
   font-size: 18px;
 }
-.review {
-  max-width: ;
+
+.review .card-3{
+  max-width: 70%;
+  float: right;
 }
+
 
 .rating {
   border: 0px solid white;
@@ -657,7 +660,7 @@ input, textarea {
 }
 
 @media (max-width: 576px) {
-   .card-heading-3, .review .card-heading{
+   .card-heading-3{
     display: block !important;
     width: 100% !important;
   }
@@ -691,6 +694,19 @@ input, textarea {
     padding: 60px 50px;
 
   }
+.card-3{
+  width: 90% !important;
+}
+
+.book-details{
+  margin: auto;
+  float: none !important;
+}
+
+.book-details img{
+  display: none;
+}
+
 }
 
 
@@ -701,6 +717,19 @@ input, textarea {
 
   .page-wrapper {
     padding: 10px 0;
+  }
+
+  .card-3{
+  width: 60%;
+}
+
+.review .card-heading{
+    display: block !important;
+    width: 100% !important;
+  }
+
+ .review .card-body{
+    display: block !important;
   }
 }
 
@@ -771,16 +800,24 @@ input, textarea {
   color: black;
 }
 
+
+
 .book-details img{
-  width: 160px;
-  text-align: center;
+  width: 170px;
 }
 
 .book-details{
-  margin: 20px;
-  min-width: 200px;
-  max-width: 250px;
+  min-height: 100vh;
+  padding: 20px;
+  min-width: 270px;
+  max-width: 25%;
   padding-bottom: 10px;
+  margin-bottom: 20px;
+  float: left;
+}
+
+#book-summary{
+  padding-bottom: 20px;
 }
 
 input, textarea {

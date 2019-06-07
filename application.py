@@ -214,17 +214,17 @@ def logout():
 def search():
 	errorMessage = ""
 	top_rated_books = db.execute("SELECT AVG(rating), title,author,isbn, year, cover_img from books JOIN reviews ON books_isbn = isbn GROUP BY isbn ORDER BY AVG(rating) DESC LIMIT 3").fetchall()
-	
+	latest_reviews = db.execute("SELECT username, rating, review_text, user_id from users JOIN reviews ON users_user_id = user_id ORDER BY date_created DESC LIMIT 3").fetchall()
 	if request.method == "GET":
 		query = request.args.get("q")
 		if not query:
-			return render_template("search.html", username = username, top_rated_books=top_rated_books)
+			return render_template("search.html", username = username, top_rated_books=top_rated_books, latest_reviews=latest_reviews)
 		#print(query, file=sys.stderr)
 		# ?TO DO handle multple words in q parameter in a separate function?
 	elif request.method == "POST":
 		if not request.form.get("search"):
 			errorMessage = "Please enter book title, author or ISBN!"
-			return render_template("search.html", username = username, errorMessage = errorMessage, top_rated_books=top_rated_books)
+			return render_template("search.html", username = username, errorMessage = errorMessage, top_rated_books=top_rated_books, latest_reviews=latest_reviews)
 		query = url_for('search') + "?q=" + request.form.get("search") + "&page=1"
 		return redirect(query)
 		
@@ -235,7 +235,7 @@ def search():
 	#Show message if no results
 	if search_results == []:
 		errorMessage = f"No books found for your search \"{query}\""
-		return render_template("search.html", username = username, errorMessage = errorMessage, top_rated_books=top_rated_books)
+		return render_template("search.html", username = username, errorMessage = errorMessage, top_rated_books=top_rated_books, latest_reviews=latest_reviews)
 
 	return paginate(search_results, request.args.get('page', type=int), query=query)
 
@@ -255,24 +255,28 @@ def book():
 	isbn= request.args.get("isbn")
 	url= url_for('book')+"?isbn=" + isbn
 
-	book_details = db.execute("SELECT title, author, isbn, year, cover_img, AVG(rating) from books JOIN reviews ON isbn = books_isbn WHERE isbn = :isbn GROUP BY isbn", 
+	book_details = db.execute("SELECT title, author, isbn, year, cover_img, CAST(AVG(rating) as numeric(10,2)), COUNT(rating) from books LEFT JOIN reviews ON isbn = books_isbn WHERE isbn = :isbn GROUP BY isbn", 
 			{"isbn": isbn}).fetchone()
 
 	#check if such book exists
 	if book_details == None:
 		return render_template("404.html", username=username),404
-
-	user_reviews = db.execute("SELECT username, rating, review_text, user_id from users JOIN reviews ON users_user_id = user_id WHERE books_isbn = :isbn ORDER BY date_created DESC",
-		{"isbn": isbn}).fetchall()
+	print(book_details, file=sys.stderr)
+	user_reviews = db.execute("SELECT username, rating, review_text, user_id from users JOIN reviews ON users_user_id = user_id WHERE books_isbn = :isbn AND user_id != :user_id ORDER BY date_created DESC",
+		{"isbn": isbn, "user_id": session.get("user_id")}).fetchall()
 
 	#check if user has already left a review
 	#TODO that in more normal way :D
+	user_left_review = db.execute("SELECT username, rating, review_text, user_id from users JOIN reviews ON users_user_id = user_id WHERE books_isbn = :isbn AND user_id = :user_id ORDER BY date_created DESC",
+		{"isbn": isbn, "user_id": session.get("user_id")}).fetchall()
+	'''
 	UserLeftReview = False
 	i = 0
 	for user in user_reviews:
 		if user_reviews[i][3] == session.get("user_id"):
 				UserLeftReview = True
 		i+=1
+	'''
 	
 	# Get GoodReads average rating and ratings count
 	GetBookReviewCounts = requests.get("https://www.goodreads.com/book/review_counts.json?isbns=" + isbn)
@@ -299,7 +303,7 @@ def book():
 
 		if errorMessages != []:
 			return render_template("book.html", username = username, book_details = book_details, 
-				user_reviews=user_reviews, UserLeftReview=UserLeftReview, errorMessages=errorMessages,
+				user_reviews=user_reviews, user_left_review=user_left_review, errorMessages=errorMessages,
 				GetBookReviewCounts=GetBookReviewCounts)
 		
 		NewReview = db.execute("INSERT INTO reviews (users_user_id, books_isbn, rating, review_text) VALUES (:user_id, :isbn, :rating, :review_text)", 
@@ -309,7 +313,7 @@ def book():
 		return redirect(url)
 
 	return render_template("book.html", username = username, book_details = book_details, 
-		user_reviews=user_reviews, UserLeftReview=UserLeftReview, isbn = isbn,
+		user_reviews=user_reviews, user_left_review=user_left_review, isbn = isbn,
 		GetBookReviewCounts=GetBookReviewCounts)
 
 @app.route("/api")
