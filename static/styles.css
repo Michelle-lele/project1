@@ -126,6 +126,7 @@ body {
   font-family: "Roboto", "Arial", "Helvetica Neue", sans-serif;
   font-weight: 400;
   font-size: 14px;
+  height: 100%;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -242,6 +243,11 @@ h6 {
   background: #4dae3c;
 }
 
+
+.green {
+  color: #57b846;
+  text-decoration: none;
+}
 /* ==========================================================================
    #DATE PICKER
    ========================================================================== */
@@ -462,6 +468,10 @@ input, textarea {
   color: #57b846;
 }
 
+.light{
+  color: darkgrey;
+}
+
 /* ==========================================================================
    #NAVIGATION
    ========================================================================== */
@@ -471,7 +481,7 @@ input, textarea {
   overflow: hidden;
 }
 
-.topnav a {
+.menu a {
   float: right;
   color: #f2f2f2;
   text-align: center;
@@ -480,11 +490,11 @@ input, textarea {
   font-size: 17px;
 }
 
-.topnav a:hover {
+.menu a:hover {
   background-color: #ddd;
   color: #57b846;
 }
-.topnav a.active {
+.menu a.active {
   background-color: #4CAF50;
   color: white;
 }
@@ -538,7 +548,7 @@ input, textarea {
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
   border-radius: 10px;
-  width: 95%;
+  width: 70%;
   min-width: 250px;
   display: table;
   min-height: 150px;
@@ -553,6 +563,9 @@ input, textarea {
   box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.35);
 }
 
+.card-3 .card-heading{
+  width: 250px;
+}
 
 .card-3 .card-heading-3{
   /*background: url("") top left/cover no-repeat;*/
@@ -571,16 +584,15 @@ input, textarea {
   padding: 30px;
 }
 
-.review .card-body{
-  width: 65%;
-}
-
 .review .card-body p{
   font-size: 18px;
 }
-.review {
-  max-width: ;
+
+.review .card-3{
+  max-width: 70%;
+  float: right;
 }
+
 
 .rating {
   border: 0px solid white;
@@ -657,7 +669,7 @@ input, textarea {
 }
 
 @media (max-width: 576px) {
-   .card-heading-3, .review .card-heading{
+   .card-heading-3{
     display: block !important;
     width: 100% !important;
   }
@@ -670,13 +682,19 @@ input, textarea {
     display: none;
   }
 
-  .review .card-body{
-    margin: auto;
-    width: 100%;
-  }
+
+
 }
 
 @media (max-width: 767px) {
+.review .card-heading{
+    margin: auto;
+    width: 100%;
+    text-align: center !important;
+  }
+.review .card-body{
+  text-align: center !important;
+}
   .card-2 {
     display: block;
   }
@@ -691,8 +709,31 @@ input, textarea {
     padding: 60px 50px;
 
   }
+.card-3{
+  width: 90% !important;
 }
 
+.book-details{
+  margin: auto;
+  float: none !important;
+  max-width: 90% !important;
+  text-align: center;
+}
+
+.book-details img{
+  display: none;
+  
+}
+
+}
+
+#book-summary{
+
+}
+
+#book-more{
+
+}
 
 @media (max-width: 965px) {
   .wrapper {
@@ -702,16 +743,37 @@ input, textarea {
   .page-wrapper {
     padding: 10px 0;
   }
+
+  .card-3{
+  width: 60%;
 }
 
-.logo {
-  color: white;
+.review .card-heading{
+    display: block !important;
+    width: 100% !important;
+  }
+
+ .review .card-body{
+    display: block !important;
+  }
+}
+
+#logo {
   float: left;
+  padding: 12px 16px;
+}
+
+#logo a{
+  color: white;
   text-transform: uppercase;
   font-size: 25px;
   font-family: serif;
   font-weight: bold;
-  padding: 12px 16px;
+  text-decoration: none;
+}
+
+#logo a::hover{
+
 }
 
 .greeting{
@@ -771,17 +833,25 @@ input, textarea {
   color: black;
 }
 
+
+
 .book-details img{
-  width: 160px;
-  text-align: center;
+  width: 170px;
 }
 
 .book-details{
-  margin: 20px;
-  min-width: 200px;
-  max-width: 250px;
+  padding: 20px;
+  min-width: 270px;
+  max-width: 30%;
   padding-bottom: 10px;
+  margin-bottom: 20px;
+  float: left;
 }
+
+#book-summary{
+  padding-bottom: 20px;
+}
+
 
 input, textarea {
   padding: 6px;
@@ -795,5 +865,8 @@ input, textarea {
 input:focus, textarea:focus{
   border-color: #57b846;
 }
+
+
+
 
 
