@@ -132,7 +132,7 @@
         <span class="star-unselected">&#9733;</span>
         {% endfor %}
         <h3 class="title"> by {{ user_review.username }}</h3>
-        <h4 class="light">{{ user_left_review[0][4] }}</h4>
+        <h4 class="light">{{ user_review.date_created}}</h4>
     </div>
     <div class="card-body">
             <p>{{ user_review.review_text }}</p>

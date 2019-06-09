@@ -4,7 +4,7 @@
 <!--Search-->
 	<form class="search" method="POST" action="{{ url_for('search') }}">
         
-        <input type="text" placeholder="Search book title, author or ISBN" name="search" {% if query %} value="{{ query }} {% endif %}"/>
+        <input type="text" placeholder="Search book title, author or ISBN" name="search" {% if query %} value="{{ query }}{% endif %}"/>
         
         <button type="submit"-><i class="fas fa-search"></i></button>
     </form>
@@ -62,6 +62,13 @@
                 <h2 class="title">{{ page_item.title }} ({{ page_item.year }})</h2>
                 <h3>by {{ page_item.author }}</h3>
                 <h4>ISBN: {{ page_item.isbn }}</h4>
+                {% for rating in range(page_item[0]|int) %}
+                <span class="star-selected">&#9733;</span>
+                {% endfor %}
+
+                {% for rating in range(5 - page_item[0]|int) %}
+                <span class="star-unselected">&#9733;</span>
+                {% endfor %}
             </div>
         </div>
         </a>

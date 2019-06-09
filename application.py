@@ -90,7 +90,7 @@ def paginate(items, page, query):
 	while first_item_index <= last_item_index:
 		page_items.append(items[first_item_index])
 		first_item_index += 1	
-		
+	print(page_items,file=sys.stderr)	
 	template = request.endpoint + ".html"
 	return render_template(template, username=username, page_items=page_items, pagination_settings=pagination_settings, query=query)
 
@@ -212,23 +212,28 @@ def logout():
 @app.route("/search/<string:query>/<int:page>", methods=["POST", "GET"])
 @login_required
 def search():
+	#TODO add book rating to the results
+	#TODO complete latest reviews
 	errorMessage = ""
+
 	top_rated_books = db.execute("SELECT AVG(rating), title,author,isbn, year, cover_img from books JOIN reviews ON books_isbn = isbn GROUP BY isbn ORDER BY AVG(rating) DESC LIMIT 3").fetchall()
 	latest_reviews = db.execute("SELECT username, rating, review_text, user_id from users JOIN reviews ON users_user_id = user_id ORDER BY date_created DESC LIMIT 3").fetchall()
+	
 	if request.method == "GET":
 		query = request.args.get("q")
 		if not query:
-			return render_template("search.html", username = username, top_rated_books=top_rated_books, latest_reviews=latest_reviews)
-		#print(query, file=sys.stderr)
-		# ?TO DO handle multple words in q parameter in a separate function?
-	elif request.method == "POST":
+			return render_template("search.html", username = username, top_rated_books=top_rated_books, 
+				latest_reviews=latest_reviews)
+		
+	if request.method == "POST":
 		if not request.form.get("search"):
 			errorMessage = "Please enter book title, author or ISBN!"
-			return render_template("search.html", username = username, errorMessage = errorMessage, top_rated_books=top_rated_books, latest_reviews=latest_reviews)
+			return render_template("search.html", username = username, errorMessage = errorMessage, top_rated_books=top_rated_books, 
+				latest_reviews=latest_reviews)
 		query = url_for('search') + "?q=" + request.form.get("search") + "&page=1"
 		return redirect(query)
 		
-	search_results = db.execute("SELECT title, author, isbn, year, cover_img from books WHERE title ILIKE :query OR author ILIKE :query OR isbn ILIKE :query ORDER BY title ASC",
+	search_results = db.execute("SELECT CAST(AVG(rating) as numeric(10,2)),title, author, isbn, year, cover_img from books LEFT JOIN reviews ON isbn = books_isbn WHERE title ILIKE :query OR author ILIKE :query OR isbn ILIKE :query GROUP BY isbn ORDER BY AVG(rating) DESC NULLS LAST",
 		{"query": "%" + query + "%"}).fetchall()
 	#print(search_results, file=sys.stderr)
 
@@ -246,7 +251,7 @@ def book():
 	'''
 	#TODO back to search results in a cookie
 	#TODO paginating reviews
-	#TODO have the user review on top
+	#TODO imporove the user review on top
 	'''
 	if not request.args.get("isbn"):
 		return redirect("search")
