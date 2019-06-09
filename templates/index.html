@@ -26,17 +26,17 @@
 <body>
     <div class="topnav">
         <span id="logo"><a href="{{ url_for('index') }}"> Book Reviews</a></span>
-        {% if username %}
         <span class="menu">
-        <a href="{{ url_for('logout') }}">Logout</a>
-        <span class="greeting"><h3>Hello, {{ username }}</h3></span>
-        {% elif url_for(request.endpoint) == "signup" %}
-        <a href="{{ url_for('login') }}">Login</a>
-        {% elif url_for(request.endpoint) == "login" %}
-        <a href="{{ url_for('signup') }}">Signup</a>
-        {% else %}
-        <a href="{{ url_for('login') }}">Login</a>
-        <a href="{{ url_for('signup') }}">Signup</a>
+        {% if username %}
+            <a href="{{ url_for('logout') }}">Logout</a>
+            <span class="greeting"><h3>Hello, {{ username }}</h3></span>
+            {% elif url_for(request.endpoint) == "signup" %}
+            <a href="{{ url_for('login') }}">Login</a>
+            {% elif url_for(request.endpoint) == "login" %}
+            <a href="{{ url_for('signup') }}">Signup</a>
+            {% else %}
+            <a href="{{ url_for('login') }}">Login</a>
+            <a href="{{ url_for('signup') }}">Signup</a>
         {% endif %}
         </span>
     </div> 
