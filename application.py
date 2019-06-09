@@ -262,12 +262,12 @@ def book():
 	if book_details == None:
 		return render_template("404.html", username=username),404
 	print(book_details, file=sys.stderr)
-	user_reviews = db.execute("SELECT username, rating, review_text, user_id from users JOIN reviews ON users_user_id = user_id WHERE books_isbn = :isbn AND user_id != :user_id ORDER BY date_created DESC",
+	user_reviews = db.execute("SELECT username, rating, review_text, user_id, date_created from users JOIN reviews ON users_user_id = user_id WHERE books_isbn = :isbn AND user_id != :user_id ORDER BY date_created DESC",
 		{"isbn": isbn, "user_id": session.get("user_id")}).fetchall()
 
 	#check if user has already left a review
 	#TODO that in more normal way :D
-	user_left_review = db.execute("SELECT username, rating, review_text, user_id from users JOIN reviews ON users_user_id = user_id WHERE books_isbn = :isbn AND user_id = :user_id ORDER BY date_created DESC",
+	user_left_review = db.execute("SELECT username, rating, review_text, user_id, date_created from users JOIN reviews ON users_user_id = user_id WHERE books_isbn = :isbn AND user_id = :user_id ORDER BY date_created DESC",
 		{"isbn": isbn, "user_id": session.get("user_id")}).fetchall()
 	'''
 	UserLeftReview = False

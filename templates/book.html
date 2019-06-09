@@ -1,8 +1,10 @@
 {% extends "index.html" %}
 {% block body %}
 <!-- TO DO back to search with last performed query, write to the cookie? -->
+
 <!-- Book Details Summary -->
 <div class="book-details">
+	<h5 class="title"><a href="{{ url_for('search') }}" class="green"><i class='fas fa-angle-double-left'></i> Back to search</a></h5>
 	<div id="book-summary">
 		{% if book_details.cover_img %}
          <img class="" src={{ book_details.cover_img }}>
@@ -13,36 +15,43 @@
 		<h3>by {{ book_details.author }}</h3>
 	    <h4>ISBN: {{ book_details.isbn }}</h4>
 	    <h4>Published: {{ book_details.year }}</h4>
-	{% if book_details[5] %}
-	<div>
+	</div>
+
+
+{% if book_details[5] %}
+	<div id="book_more">
+		<div>
 			{% for rating in range(book_details[5]|int) %}
+			<span class="star-selected">&#9733;</span>
+			{% endfor %}
+			{% for rating in range(5 - book_details[5]|int) %}
+			<span class="star-unselected">&#9733;</span>
+			{% endfor %}
+		</div>
+		    <h4>{{ book_details[5] }} Out of {{ book_details[6] }} ratings!</h4>
+	{% endif %}
+
+	{% if GetBookReviewCounts %}
+		<div class="">
+			{% for rating in range(GetBookReviewCounts['books'][0]['average_rating']|int) %}
 		   	<span class="star-selected">&#9733;</span>
 		   	{% endfor %}
-		   	{% for rating in range(5 - book_details[5]|int) %}
+		   	{% for rating in range(5 - GetBookReviewCounts['books'][0]['average_rating']|int) %}
 		    <span class="star-unselected">&#9733;</span>
 		    {% endfor %}
+			<h3 class="title"> by GoodReads</h3>
+			<h4>{{ GetBookReviewCounts['books'][0]['average_rating'] }} Out of {{ GetBookReviewCounts['books'][0]['ratings_count'] }} ratings!</h4>
 		</div>
-	    <h4>{{ book_details[5] }} Out of {{ book_details[6] }} ratings!</h4>
 	{% endif %}
-</div>
-
-{% if GetBookReviewCounts %}
-	<div class="">
-		{% for rating in range(GetBookReviewCounts['books'][0]['average_rating']|int) %}
-	   	<span class="star-selected">&#9733;</span>
-	   	{% endfor %}
-	   	{% for rating in range(5 - GetBookReviewCounts['books'][0]['average_rating']|int) %}
-	    <span class="star-unselected">&#9733;</span>
-	    {% endfor %}
-		<h2 class="title"> by GoodReads</h2>
-		<h4>{{ GetBookReviewCounts['books'][0]['average_rating'] }} Out of {{ GetBookReviewCounts['books'][0]['ratings_count'] }} ratings!</h4>
 	</div>
-{% endif %}
 </div>
 
 
 
 <!--Review Form/ User Review-->
+<div>
+	<h2 class="title center">User Reviews</h2>
+</div>
 	{% if not user_left_review %}
 	<div class="review card card-3">
 		<form method="POST" action = "{{ url_for('book')}}?isbn={{ book_details.isbn }}">
@@ -65,7 +74,7 @@
 	  				<button type="button" name="rating" value="1">&#9733;</button>
 	  				-->
 	            </div>
-	            <h2 class="title"> by {{ username }}</h2>
+	            <h3 class="title"> by {{ username }}</h3>
 			</div>
 	        <div class="card-body">
 	                    <h2 class="title"></h2>
@@ -94,7 +103,7 @@
 	    </form>
     </div>
     {% endif %}
-
+<!-- User Reviews-->
    	{% if user_left_review %}
 		<div class="review card card-3">
 	    	<div class="card-heading">
@@ -104,17 +113,15 @@
 	   	 	{% for rating in range(5 - user_left_review[0][1]|int) %}
 	        <span class="star-unselected">&#9733;</span>
 	        {% endfor %}
-	        <h2 class="title"> Rated by You!</h2>
+	        <h3 class="title"> Rated by You!</h3>
+	        <h4 class="light">{{ user_left_review[0][4] }}</h4>
 	    	</div>
 		    <div class="card-body">
 		            <p>{{ user_left_review[0][2] }}</p>
 		    </div>
 		</div>
 	{% endif %}
-<div>
-	<h2 class="title center">User Reviews</h2>
-</div>
-<!-- User Reviews-->
+
 {% for user_review in user_reviews %}
 <div class="review card card-3">
     <div class="card-heading">
@@ -124,7 +131,8 @@
    	 	{% for rating in range(5 - user_review.rating) %}
         <span class="star-unselected">&#9733;</span>
         {% endfor %}
-        <h2 class="title"> by {{ user_review.username }}</h2>
+        <h3 class="title"> by {{ user_review.username }}</h3>
+        <h4 class="light">{{ user_left_review[0][4] }}</h4>
     </div>
     <div class="card-body">
             <p>{{ user_review.review_text }}</p>
